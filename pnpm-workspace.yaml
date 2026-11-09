@@ -2,3 +2,8 @@ packages:
   - apps/*
   - packages/*
 nodeLinker: hoisted
+
+# Temporary until Expo and ESLint request patched majors (Issue #2).
+overrides:
+  glob@13: 14.0.2
+  minimatch: 11.0.1

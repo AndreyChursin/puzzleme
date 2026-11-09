@@ -29,6 +29,7 @@ export interface PuzzleDefinition {
   readonly rows: number;
   readonly columns: number;
   readonly pieceSize: number;
+  readonly pieceHeight?: number;
   readonly edges: readonly PuzzleEdge[];
   readonly pieces: readonly PuzzlePiece[];
 }
@@ -36,6 +37,7 @@ export interface PuzzleOptions {
   readonly rows: number;
   readonly columns: number;
   readonly pieceSize: number;
+  readonly pieceHeight?: number;
   /** Unsigned 32-bit integer; zero is valid. */
   readonly seed: number;
 }
@@ -53,7 +55,7 @@ export function traverseEdge({ edge, reversed }: PieceEdge): readonly CubicSegme
 /** Version 1: row-major horizontal edges, then vertical edges, using a 32-bit LCG.
  * Geometry is expressed in puzzle units, with y increasing downwards.
  */
-export function generatePuzzle({ rows, columns, pieceSize, seed }: PuzzleOptions): PuzzleDefinition {
+export function generatePuzzle({ rows, columns, pieceSize, pieceHeight = pieceSize, seed }: PuzzleOptions): PuzzleDefinition {
   const grid = createGrid(rows, columns);
   if (grid.pieceCount > 10_000) throw new RangeError('At most 10000 pieces are supported');
   if (!Number.isFinite(pieceSize) || pieceSize < 1 || pieceSize > 1_000_000) {
@@ -62,6 +64,7 @@ export function generatePuzzle({ rows, columns, pieceSize, seed }: PuzzleOptions
   if (!Number.isInteger(seed) || seed < 0 || seed > 0xffffffff) {
     throw new RangeError('Seed must be an unsigned 32-bit integer');
   }
+  if(!Number.isFinite(pieceHeight)||pieceHeight<1||pieceHeight>1_000_000) throw new RangeError('Invalid piece height');
   let state = seed;
   const random = () => {
     state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
@@ -71,7 +74,7 @@ export function generatePuzzle({ rows, columns, pieceSize, seed }: PuzzleOptions
   const makeEdge = (id: string, x: number, y: number, vertical: boolean, flat: boolean): PuzzleEdge => {
     const p = (along: number, normal: number) => point(
       (x + (vertical ? normal : along)) * pieceSize,
-      (y + (vertical ? along : normal)) * pieceSize,
+      (y + (vertical ? along : normal)) * pieceHeight,
     );
     const start = p(0, 0);
     const end = p(1, 0);
@@ -112,5 +115,5 @@ export function generatePuzzle({ rows, columns, pieceSize, seed }: PuzzleOptions
     ]);
     return Object.freeze({ id: `piece:${row}:${column}`, row, column, edges: boundary });
   });
-  return Object.freeze({ version: 1, seed, rows, columns, pieceSize, edges: Object.freeze(edges), pieces: Object.freeze(pieces) });
+  return Object.freeze({ version: 1, seed, rows, columns, pieceSize, ...(pieceHeight===pieceSize?{}:{pieceHeight}), edges: Object.freeze(edges), pieces: Object.freeze(pieces) });
 }

@@ -1,1 +1,1 @@
-export { TestScene as default } from '@puzzleme/game-renderer';
+export {default} from './Session';

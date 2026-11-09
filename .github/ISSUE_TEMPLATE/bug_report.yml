@@ -1,0 +1,51 @@
+name: Bug report
+description: Report a reproducible PuzzleMe problem.
+title: '[Bug] '
+labels: [bug]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Describe the problem without credentials or private photos.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Commit/version, Web browser or iOS device/OS, Node/pnpm versions if relevant, connectivity state.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproducible steps
+      placeholder: '1. Open ...'
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and evidence
+      description: Include sanitized error messages or screenshots; never paste tokens or private data.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Observable conditions for a fix, including a regression test where practical.
+      placeholder: '- [ ] The reproduction succeeds on the affected platform.'
+    validations:
+      required: true
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Workarounds and impact

@@ -97,3 +97,18 @@ Known limits: contour diagnostics sample curves rather than prove all possible
 cubic intersections. Large-grid performance, native rendering parity, image
 clipping and interaction remain unverified or outside this phase. Algorithm
 versioning must be respected before any saved-state format relies on the seed.
+
+## Rebase validation — 2026-11-09
+
+Rebased PR #7 onto main `638a333` after the dependency-remediation and specification
+merges. No code conflicts occurred. Preserved patched glob/minimatch overrides,
+lockfile and new dependency regression tests. Updated ROADMAP to distinguish this
+PR's implemented subset from remaining full-spec Phase 2 requirements; the original
+PROJECT_SPEC is unchanged.
+
+Executed after rebase (Linux, Node 24.22.1, pnpm 11.25.0): frozen-lockfile install,
+typecheck, zero-warning lint, 42 unit tests, 13 automation/dependency regression
+tests, Expo dependency compatibility and production Web export all passed.
+`pnpm audit --audit-level moderate` passed with no known vulnerabilities.
+Chromium production-build smoke checks at 1440×1000 and 390×844 passed canvas load
+and details toggle with zero page errors. No iOS/device/Safari tests executed.

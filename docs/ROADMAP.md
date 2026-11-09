@@ -24,7 +24,7 @@ as work lands; never infer later-phase completion from package names or a mock U
 | Phase | Current status |
 | --- | --- |
 | 1 — Project foundation | Completed for the verified foundation scope listed below; iOS/device validation remains pending |
-| 2 — Puzzle geometry | Not implemented; no completion evidence |
+| 2 — Puzzle geometry | Partially implemented in PR #7: seeded explicit grid, shared contours, validation and static color preview; full phase criteria remain pending |
 | 3 — Interactive gameplay | Not implemented; no completion evidence |
 | 4 — Images and persistence | Not implemented; only persistence interface/version scaffolding exists |
 | 5 — Product interface | Not implemented; foundation landing screen is not the required product screen set |
@@ -70,8 +70,22 @@ silently treat the audit or hosted runtime checks as passed.
 
 ## Phase 2 — Puzzle geometry
 
-Status: **not implemented**. A `createGrid` utility and decorative seams are not
-puzzle topology or generated geometry.
+Status: **partially implemented in [PR #7](https://github.com/AndreyChursin/puzzleme/pull/7)**
+(on top of main `638a333`). The PR implements seeded explicit rows/columns,
+immutable shared Bézier edges, flat boundaries, neighbor lookup, separate mutable
+state records and a static assembled color preview using the same Skia paths on
+Web/iOS. Sources: [generator](../packages/game-core/src/puzzle.ts),
+[validation](../packages/game-core/src/validation.ts),
+[state](../packages/game-core/src/state.ts),
+[preview](../packages/game-renderer/src/TestScene.tsx).
+
+This is not full Phase 2 completion under the recovered specification. Pending:
+image-dimension/difficulty-based grid selection for all five presets, rectangular
+piece sizing to preserve arbitrary image aspect ratios, explicit solved-position/
+neighbor/render metadata in definitions, group IDs in mutable state, textured
+shared-image clipping, and physical iOS parity checks. The current intersection
+diagnostic samples curves rather than providing an exact cubic-intersection proof.
+These requirements are preserved below; the rebase does not implement new scope.
 
 Acceptance criteria:
 
@@ -89,7 +103,11 @@ Acceptance criteria:
   neighbor relationships, including rectangular grids and all difficulty presets.
 
 Evidence required for completion: generator/geometry implementation, executed test
-results and browser inspection of the assembled puzzle. None currently recorded.
+results and browser inspection of the assembled puzzle. Partial implementation
+and prior executed checks are recorded in [Phase 2 evidence](phase-2-geometry.md).
+The rebase onto main preserves the dependency-remediation overrides and tests;
+see that evidence for checks rerun on the combined tree. Full phase completion
+remains pending until all criteria above are implemented and verified.
 
 ## Phase 3 — Interactive gameplay
 

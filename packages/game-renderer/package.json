@@ -1,0 +1,12 @@
+{
+  "name": "@puzzleme/game-renderer",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "peerDependencies": {
+    "react": "19.3.0",
+    "react-native": "0.88.1",
+    "@shopify/react-native-skia": "2.14.0"
+  }
+}

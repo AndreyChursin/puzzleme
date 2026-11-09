@@ -30,6 +30,7 @@ export function moveGroup(s: PlayState,dx:number,dy:number): PlayState {
 export function releaseGroup(puzzle:PuzzleDefinition,s:PlayState,tolerance=20):PlayState {
   if(!s.active||s.status!=='playing') return s;
   if(!Number.isFinite(tolerance)||tolerance<0) throw new RangeError('Invalid snap tolerance');
+  const byId=new Map(puzzle.pieces.map(p=>[p.id,p]));
   let next=s;
   let merged=true;
   while(merged) {
@@ -40,7 +41,7 @@ export function releaseGroup(puzzle:PuzzleDefinition,s:PlayState,tolerance=20):P
       if(a.group!==moving) continue;
       for(const neighborId of Object.values(getNeighbors(puzzle,piece))) {
         if(!neighborId) continue;
-        const neighbor=puzzle.pieces.find(p=>p.id===neighborId)!;
+        const neighbor=byId.get(neighborId)!;
         const b=next.pieces[neighborId]!;
         if(a.group===b.group) continue;
         const dx=b.x-(neighbor.column-piece.column)*puzzle.pieceSize-a.x;
@@ -58,3 +59,9 @@ export function releaseGroup(puzzle:PuzzleDefinition,s:PlayState,tolerance=20):P
   return {...next,active:null,status:won?'completed':'playing'};
 }
 export const pauseGame=(s:PlayState):PlayState=>s.status==='completed'?s:{...s,active:null,status:s.status==='paused'?'playing':'paused'};
+
+/** Cancellation must not undo a pause/restart/completion performed during a gesture. */
+export function cancelDrag(current: PlayState, initial: PlayState): PlayState {
+  if(current.status!=='playing'||!current.active) return current;
+  return {...initial,active:null};
+}

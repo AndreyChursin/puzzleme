@@ -40,3 +40,39 @@ animation-thread migration remain profiling/optimization work. No 60 FPS claim.
 Timer uses one-second ticks, so background scheduling can reduce elapsed accuracy.
 No persistence or image import; preview remains colored geometry. Completion
 banner is intentionally simple. Keyboard piece manipulation is not implemented.
+
+## Stabilization review (PR #11)
+
+Fixed the one-finger continuation jump after pinch by rebasing the pointer delta;
+rollback now restores the gesture-start camera as well as state. Cancellation
+cannot resurrect an active drag after pause/restart. Added regression coverage
+for cancellation and joining two already connected multi-piece groups.
+
+Removed repeated `find` lookups from hit testing/rendering/snapping; group counts
+are computed in one pass rather than filtering the entire board for every piece.
+Memoized piece components retain placement identity for unaffected pieces, and
+paths remain cached. Added 12/48/150 board-size controls to reproduce load testing.
+
+Executed: frozen install, TypeScript, ESLint, 52 unit tests, 13 automation tests,
+`pnpm check`, production export and audit (no vulnerabilities). Mouse and CDP
+emulated-touch production runs both complete all 12 pieces, verify victory lock
+and restart with no page errors. `TOUCH=1 WIDTH=390 python scripts/phase3-browser.py`
+exercises actual browser touch events rather than only a smaller mouse viewport.
+`python scripts/phase3-profile.py` checks a touch-cancel rollback by comparing
+canvas screenshots byte-for-byte and exercises 100 moves at each board size.
+
+Headless system Chromium, Linux software rendering, one run (includes automation
+transport and event scheduling):
+
+| Pieces | 100 pointer moves wall time | Browser TaskDuration delta |
+| --- | ---: | ---: |
+| 12 | 5097.2 ms | 4089.3 ms |
+| 48 | 5771.4 ms | 4757.6 ms |
+| 150 | 13469.2 ms | 12612.0 ms |
+
+These are neither frame rates nor hardware-device measurements. The pronounced
+150-piece slowdown remains a performance blocker for claiming responsive large
+boards. The PR stays draft: JS-thread board updates and full-scene Skia work need
+further profiling/animation-thread investigation. No physical iOS, Safari or
+multitouch device validation ran. Pinch-transition code was reviewed/fixed but
+multi-finger end-to-end automation remains pending. No Phase 4 work was added.

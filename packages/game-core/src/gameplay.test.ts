@@ -49,3 +49,20 @@ it('records core transition timings for practical board sizes',()=>{
   releaseGroup(p,s);console.log(`${rows!*columns!} pieces: 100 moves + release ${(performance.now()-start).toFixed(2)}ms`);
  }
 });
+it('preserves two independently connected groups when joining and prevents duplicate merges',()=>{
+ const p=generatePuzzle({rows:2,columns:3,pieceSize:100,seed:0}),a=createGame(p,0);
+ const s={...a,pieces:Object.fromEntries(p.pieces.map((piece,i)=>[piece.id,{x:piece.column*100+(i%3===2?10:0),y:piece.row*100,group:i%3===2?'right':'left'}]))};
+ const merged=releaseGroup(p,selectPiece(s,'piece:0:2'),10);
+ expect(merged.status).toBe('completed');
+ expect(new Set(Object.values(merged.pieces).map(v=>v.group)).size).toBe(1);
+ expect(s.pieces['piece:0:2']!.x).toBe(210);
+ expect(releaseGroup(p,merged)).toBe(merged);
+});
+it('cancels a drag without resurrecting selection or undoing pause/restart',async()=>{
+ const {cancelDrag}=await import('./gameplay');
+ const initial=createGame(puzzle,42), moved=moveGroup(selectPiece(initial,'piece:0:0'),30,40);
+ expect(cancelDrag(moved,initial)).toEqual(initial);
+ expect(cancelDrag(pauseGame(moved),initial)).toEqual(pauseGame(moved));
+ const restarted=createGame(puzzle,43);
+ expect(cancelDrag(restarted,initial)).toBe(restarted);
+});

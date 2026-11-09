@@ -1,22 +1,33 @@
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { useMemo, useRef, useState, useEffect, memo } from 'react';
 import { View, Text, Pressable, PanResponder, Platform } from 'react-native';
-import { Canvas, Group, Path, Skia } from '@shopify/react-native-skia';
-import { createGame, generatePuzzle, traverseEdge, selectPiece, moveGroup, releaseGroup, pauseGame, toPuzzle, zoomCamera, type Camera } from '@puzzleme/game-core';
+import { Canvas, Group, Path, Skia, type SkPath } from '@shopify/react-native-skia';
+import { createGame, generatePuzzle, traverseEdge, selectPiece, moveGroup, releaseGroup, pauseGame, toPuzzle, zoomCamera, type Camera, cancelDrag, type Placement } from '@puzzleme/game-core';
 
 const boardStyle={height:500,touchAction:'none' as const,userSelect:'none' as const,backgroundColor:'#edf0e5'};
+const Piece = memo(function Piece({path, placement, x, y, selected, connected}:{path:SkPath;placement:Placement;x:number;y:number;selected:boolean;connected:boolean}) {
+  return <Group transform={[{translateX:placement.x-x},{translateY:placement.y-y}]}>
+    <Path path={path} color={connected?'#83aaa2':'#e3c898'}/>
+    <Path path={path} style="stroke" strokeWidth={selected?4:1.5} color={selected?'#d16438':'#254f46'}/>
+  </Group>;
+});
 export function TestScene() {
-  const puzzle=useMemo(()=>generatePuzzle({rows:3,columns:4,pieceSize:100,seed:42}),[]);
+  const [count,setCount]=useState(12);
+  return <View><View style={{flexDirection:'row'}}>{[12,48,150].map(n=><Pressable key={n} accessibilityRole="button" accessibilityLabel={`${n} pieces`} onPress={()=>setCount(n)}><Text style={{padding:8}}>{n} pieces</Text></Pressable>)}</View><GameBoard key={count} rows={count===12?3:count===48?6:10} columns={count===12?4:count===48?8:15}/></View>;
+}
+function GameBoard({rows,columns}:{rows:number;columns:number}) {
+  const puzzle=useMemo(()=>generatePuzzle({rows,columns,pieceSize:100,seed:42}),[rows,columns]);
   const paths=useMemo(()=>Object.fromEntries(puzzle.pieces.map(piece=>{
     const builder=Skia.PathBuilder.Make(), commands=piece.edges.flatMap(traverseEdge);
     builder.moveTo(commands[0]!.start.x,commands[0]!.start.y);
     commands.forEach(s=>builder.cubicTo(s.control1.x,s.control1.y,s.control2.x,s.control2.y,s.end.x,s.end.y));builder.close();
     return [piece.id,builder.detach()];
   })),[puzzle]);
+  const byId=useMemo(()=>new Map(puzzle.pieces.map(p=>[p.id,p])),[puzzle]);
   const [state,setState]=useState(()=>createGame(puzzle,42));
-  const [width,setWidth]=useState(440), [camera,setCamera]=useState<Camera>({x:20,y:20,scale:0.45});
+  const [width,setWidth]=useState(440), [camera,setCamera]=useState<Camera>({x:20,y:20,scale:rows===3?0.45:470/(rows*250+100)});
   const [seconds,setSeconds]=useState(0);
   const live=useRef({state,camera,width});live.current={state,camera,width};
-  const last=useRef({x:0,y:0}), cancelled=useRef(state), pinch=useRef(0);
+  const last=useRef({x:0,y:0}), cancelled=useRef(state), pinch=useRef(0), initialCamera=useRef(camera);
   useEffect(()=>{if(state.status!=='playing')return;const t=setInterval(()=>setSeconds(s=>s+1),1000);return()=>clearInterval(t);},[state.status]);
   const responder=useMemo(()=>PanResponder.create({
     onStartShouldSetPanResponder:()=>true,
@@ -24,9 +35,9 @@ export function TestScene() {
     onPanResponderTerminationRequest:()=>false,
     onPanResponderGrant:e=>{
       const s=live.current.state,c=live.current.camera;
-      cancelled.current=s;last.current={x:e.nativeEvent.locationX,y:e.nativeEvent.locationY};pinch.current=0;
+      cancelled.current=s;initialCamera.current=c;last.current={x:e.nativeEvent.locationX,y:e.nativeEvent.locationY};pinch.current=0;
       const at=toPuzzle(last.current,c);
-      const id=[...s.order].reverse().find(id=>{const p=puzzle.pieces.find(p=>p.id===id)!,a=s.pieces[id]!;return paths[id]!.contains(at.x-a.x+p.column*100,at.y-a.y+p.row*100);});
+      const id=[...s.order].reverse().find(id=>{const p=byId.get(id)!,a=s.pieces[id]!;return paths[id]!.contains(at.x-a.x+p.column*100,at.y-a.y+p.row*100);});
       const next=selectPiece(s,id??null);live.current.state=next;setState(next);
     },
     onPanResponderMove:e=>{
@@ -39,18 +50,24 @@ export function TestScene() {
         if(pinch.current){const next=zoomCamera(c,distance/pinch.current,at);live.current.camera=next;setCamera(next);}
         pinch.current=distance;
         const next={...s,active:null};live.current.state=next;setState(next);
-      }else if(s.active){const next=moveGroup(s,(at.x-last.current.x)/c.scale,(at.y-last.current.y)/c.scale);live.current.state=next;setState(next);}
+      }else if(pinch.current){pinch.current=0;last.current=at;return;}
+      else if(s.active){const next=moveGroup(s,(at.x-last.current.x)/c.scale,(at.y-last.current.y)/c.scale);live.current.state=next;setState(next);}
       else {const next={...c,x:c.x+at.x-last.current.x,y:c.y+at.y-last.current.y};live.current.camera=next;setCamera(next);}
       last.current=at;
     },
     onPanResponderRelease:()=>{const next=releaseGroup(puzzle,live.current.state);live.current.state=next;setState(next);},
-    onPanResponderTerminate:()=>{live.current.state=cancelled.current;setState(cancelled.current);},
-  }),[paths,puzzle]);
+    onPanResponderTerminate:()=>{const next=cancelDrag(live.current.state,cancelled.current);live.current.state=next;setState(next);live.current.camera=initialCamera.current;setCamera(initialCamera.current);},
+  }),[paths,puzzle,byId]);
   const wheelHandlers=Platform.OS==='web'?{onWheel:(e:{preventDefault:()=>void; nativeEvent:{deltaX:number;deltaY:number;ctrlKey:boolean}})=>{
     e.preventDefault();if(state.status==='completed'||state.status==='paused')return;
     setCamera(c=>e.nativeEvent.ctrlKey?zoomCamera(c,Math.exp(-e.nativeEvent.deltaY*0.01),{x:width/2,y:250}):{...c,x:c.x-e.nativeEvent.deltaX,y:c.y-e.nativeEvent.deltaY});
   }}:{};
-  const fit=()=>setCamera({x:15,y:15,scale:Math.min((width-30)/600,470/1100)});
+  const groupSizes=useMemo(()=>{
+    const sizes=new Map<string,number>();
+    for(const p of Object.values(state.pieces))sizes.set(p.group,(sizes.get(p.group)??0)+1);
+    return sizes;
+  },[state.pieces]);
+  const fit=()=>setCamera({x:15,y:15,scale:Math.min((width-30)/(columns*150),470/(rows*250+100))});
   return <View>
     <View style={{flexDirection:'row',flexWrap:'wrap',gap:8}}>
       {['−','+','Fit','Reset view','Pause','Restart'].map(label=><Pressable key={label} accessibilityRole="button" accessibilityLabel={label} onPress={()=>{
@@ -65,13 +82,10 @@ export function TestScene() {
     <View {...responder.panHandlers} {...wheelHandlers} onLayout={e=>setWidth(e.nativeEvent.layout.width)} style={boardStyle}>
       <Canvas style={{width:'100%',height:500}} accessibilityLabel="Interactive puzzle board">
         <Group transform={[{translateX:camera.x},{translateY:camera.y},{scale:camera.scale}]}>
-          {state.order.map(id=>{const p=puzzle.pieces.find(p=>p.id===id)!,a=state.pieces[id]!;
-            const selected=state.active!==null&&a.group===state.pieces[state.active]!.group;
-            const connected=Object.values(state.pieces).filter(p=>p.group===a.group).length>1;
-            return <Group key={id} transform={[{translateX:a.x-p.column*100},{translateY:a.y-p.row*100}]}>
-              <Path path={paths[id]!} color={connected?'#83aaa2':'#e3c898'}/>
-              <Path path={paths[id]!} style="stroke" strokeWidth={selected?4:1.5} color={selected?'#d16438':'#254f46'}/>
-            </Group>;
+          {state.order.map(id=>{const p=byId.get(id)!,a=state.pieces[id]!;
+            return <Piece key={id} path={paths[id]!} placement={a} x={p.column*100} y={p.row*100}
+              selected={state.active!==null&&a.group===state.pieces[state.active]!.group}
+              connected={(groupSizes.get(a.group)??0)>1}/>;
           })}
         </Group>
       </Canvas>

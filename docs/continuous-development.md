@@ -6,7 +6,7 @@ puzzle mechanics, implement future phases, deploy a release, or enable AI fixes.
 ## Toolchain and local reproduction
 
 Use Node **24.22.1** (`.node-version`) and pnpm **11.25.0** (`packageManager`). Both
-workflows pin these versions and actions to full commit SHAs. pnpm's store is
+workflows pin these versions and Node 24-native actions to full commit SHAs. pnpm's store is
 cached by OS/toolchain/lockfile using setup-node; node_modules is not cached.
 Update toolchain pins together and verify compatibility with the current Expo SDK.
 

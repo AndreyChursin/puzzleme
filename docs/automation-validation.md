@@ -49,6 +49,11 @@ compatibility and remediation separately. Until remediated, daily health checks
 are expected to fail audit and create at most one open marked audit issue.
 Audit results are point-in-time registry data and may change.
 
+The initial hosted PR CI run also passed. Its Node 20 action-runtime deprecation
+warning prompted an update to current Node 24-native action releases, pinned to
+full SHAs. The revised action input configuration and automation tests were
+revalidated; inspect the PR checks for the final hosted run.
+
 ## Not executed
 
 - Actual GitHub scheduled/manual health runs, live issue creation/deduplication,

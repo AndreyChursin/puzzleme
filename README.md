@@ -1,6 +1,6 @@
 # PuzzleMe
 
-Cross-platform offline jigsaw project. **Phase 2 core geometry:** pnpm monorepo, strict TypeScript, Expo Router, shared Skia assembled puzzle preview, and deterministic, immutable jigsaw topology with complementary Bézier boundaries. No gameplay or persistence is implemented yet.
+Cross-platform offline jigsaw project. **Phase 3 playable board:** pnpm monorepo, strict TypeScript, Expo Router, shared Skia assembled puzzle preview, and deterministic, immutable jigsaw topology with complementary Bézier boundaries. Initial local gameplay is implemented; persistence remains pending.
 
 ## Run
 
@@ -13,7 +13,7 @@ pnpm install
 pnpm dev
 ```
 
-Open the URL printed by Expo (normally http://localhost:8081). The home page must display an assembled 3×4 jigsaw with classic interlocking contours drawn by Skia. The details button toggles the workspace foundation summary. CanvasKit WASM is copied locally during install/export; the renderer does not use a CDN.
+Open the URL printed by Expo (normally http://localhost:8081). The home page displays a shuffled 3×4 puzzle. Drag matching neighbors together; empty space pans and +/− zooms. See [gameplay verification](docs/phase-3-gameplay.md). The details button toggles the workspace foundation summary. CanvasKit WASM is copied locally during install/export; the renderer does not use a CDN.
 
 ```sh
 pnpm check          # strict typecheck + Vitest

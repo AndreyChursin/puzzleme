@@ -6,3 +6,4 @@ export { getNeighbors, sampleContour, hasContourIntersection, validatePuzzle } f
 export type { Side, Neighbors } from './validation';
 export { createAssembledState } from './state';
 export type { PieceState, GameState } from './state';
+export * from './gameplay';

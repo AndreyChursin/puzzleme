@@ -25,7 +25,7 @@ as work lands; never infer later-phase completion from package names or a mock U
 | --- | --- |
 | 1 — Project foundation | Completed for the verified foundation scope listed below; iOS/device validation remains pending |
 | 2 — Puzzle geometry | Partially implemented in PR #7: seeded explicit grid, shared contours, validation and static color preview; full phase criteria remain pending |
-| 3 — Interactive gameplay | Not implemented; no completion evidence |
+| 3 — Interactive gameplay | Implemented initial playable board in Issue #10; native/touch and rendering performance verification pending |
 | 4 — Images and persistence | Not implemented; only persistence interface/version scaffolding exists |
 | 5 — Product interface | Not implemented; foundation landing screen is not the required product screen set |
 | 6 — Cross-platform validation | Pending; limited Phase 1 Chromium smoke checks do not satisfy this phase |
@@ -111,7 +111,7 @@ remains pending until all criteria above are implemented and verified.
 
 ## Phase 3 — Interactive gameplay
 
-Status: **not implemented**.
+Status: initial shared playable board implemented; see [Phase 3 evidence](phase-3-gameplay.md). Physical iOS/touch and rendering-performance checks remain pending.
 
 Acceptance criteria:
 

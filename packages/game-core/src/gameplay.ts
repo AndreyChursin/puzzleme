@@ -62,6 +62,6 @@ export const pauseGame=(s:PlayState):PlayState=>s.status==='completed'?s:{...s,a
 
 /** Cancellation must not undo a pause/restart/completion performed during a gesture. */
 export function cancelDrag(current: PlayState, initial: PlayState): PlayState {
-  if(current.status!=='playing'||!current.active) return current;
+  if(current.status!=='playing') return current;
   return {...initial,active:null};
 }

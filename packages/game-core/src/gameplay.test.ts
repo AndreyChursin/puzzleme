@@ -62,6 +62,7 @@ it('cancels a drag without resurrecting selection or undoing pause/restart',asyn
  const {cancelDrag}=await import('./gameplay');
  const initial=createGame(puzzle,42), moved=moveGroup(selectPiece(initial,'piece:0:0'),30,40);
  expect(cancelDrag(moved,initial)).toEqual(initial);
+ expect(cancelDrag({...moved,active:null},initial)).toEqual(initial);
  expect(cancelDrag(pauseGame(moved),initial)).toEqual(pauseGame(moved));
  const restarted=createGame(puzzle,43);
  expect(cancelDrag(restarted,initial)).toBe(restarted);

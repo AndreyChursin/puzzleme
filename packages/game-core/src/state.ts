@@ -4,6 +4,6 @@ export interface PieceState { x: number; y: number; selected: boolean }
 export interface GameState { pieces: Record<string, PieceState> }
 export function createAssembledState(puzzle: PuzzleDefinition): GameState {
   return { pieces: Object.fromEntries(puzzle.pieces.map(p => [p.id, {
-    x: p.column * puzzle.pieceSize, y: p.row * puzzle.pieceSize, selected: false,
+    x: p.column * puzzle.pieceSize, y: p.row * (puzzle.pieceHeight??puzzle.pieceSize), selected: false,
   }])) };
 }

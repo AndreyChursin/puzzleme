@@ -26,7 +26,7 @@ as work lands; never infer later-phase completion from package names or a mock U
 | 1 — Project foundation | Completed for the verified foundation scope listed below; iOS/device validation remains pending |
 | 2 — Puzzle geometry | Partially implemented in PR #7: seeded explicit grid, shared contours, validation and static color preview; full phase criteria remain pending |
 | 3 — Interactive gameplay | Implemented initial playable board in Issue #10; emulated touch completion/cancellation verified; native and large-board rendering performance pending |
-| 4 — Images and persistence | Not implemented; only persistence interface/version scaffolding exists |
+| 4 — Images and persistence | Implemented local image/session flow in Issue #12; Chromium evidence recorded; native/Safari and cold Web offline checks pending |
 | 5 — Product interface | Not implemented; foundation landing screen is not the required product screen set |
 | 6 — Cross-platform validation | Pending; limited Phase 1 Chromium smoke checks do not satisfy this phase |
 | 7 — Release preparation | Not implemented; EAS profiles alone do not establish release/TestFlight readiness |
@@ -80,10 +80,7 @@ Web/iOS. Sources: [generator](../packages/game-core/src/puzzle.ts),
 [preview](../packages/game-renderer/src/TestScene.tsx).
 
 This is not full Phase 2 completion under the recovered specification. Pending:
-image-dimension/difficulty-based grid selection for all five presets, rectangular
-piece sizing to preserve arbitrary image aspect ratios, explicit solved-position/
-neighbor/render metadata in definitions, group IDs in mutable state, textured
-shared-image clipping, and physical iOS parity checks. The current intersection
+The Phase 4 implementation now supplies image-dimension/difficulty grid selection, rectangular piece sizing and shared-image clipping. Explicit expanded piece metadata and physical iOS parity checks remain pending. The current intersection
 diagnostic samples curves rather than providing an exact cubic-intersection proof.
 These requirements are preserved below; the rebase does not implement new scope.
 
@@ -135,8 +132,7 @@ and profiling records. None currently recorded.
 
 ## Phase 4 — Images and persistence
 
-Status: **not implemented**. [Storage contract](../packages/game-storage/src/index.ts)
-contains only an interface and save-format version, without an adapter or saved games.
+Status: local gallery/import, textured pieces, image-aware presets, versioned save/assets adapters and restore are implemented; see [Phase 4 evidence](phase-4-images-persistence.md). Native/device and Safari verification remain pending.
 
 Acceptance criteria:
 
@@ -153,8 +149,7 @@ Acceptance criteria:
 - Execute serialization/restoration/invalid-state tests and integration tests restoring
   saved progress and image assets across restart on supported platforms.
 
-Evidence required: adapters, image pipeline, migration/error handling and executed
-restart/restore tests. None currently recorded.
+Evidence: adapters, image pipeline, schema tests and Chromium restart/restore results are recorded in [Phase 4 evidence](phase-4-images-persistence.md). Native/Safari and cold offline restart remain pending.
 
 ## Phase 5 — Product interface
 

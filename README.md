@@ -1,6 +1,6 @@
 # PuzzleMe
 
-Cross-platform offline jigsaw project. **Phase 3 playable board:** pnpm monorepo, strict TypeScript, Expo Router, shared Skia assembled puzzle preview, and deterministic, immutable jigsaw topology with complementary Bézier boundaries. Initial local gameplay is implemented; persistence remains pending.
+Cross-platform offline jigsaw project. **Phase 4 local image puzzles:** pnpm monorepo, strict TypeScript, Expo Router, shared Skia assembled puzzle preview, and deterministic, immutable jigsaw topology with complementary Bézier boundaries. Local image import and saved-game resume are implemented; see [Phase 4 verification and limitations](docs/phase-4-images-persistence.md).
 
 ## Run
 
@@ -13,7 +13,7 @@ pnpm install
 pnpm dev
 ```
 
-Open the URL printed by Expo (normally http://localhost:8081). The home page displays a shuffled 3×4 puzzle. Drag matching neighbors together; empty space pans and +/− zooms. See [gameplay verification](docs/phase-3-gameplay.md). The details button toggles the workspace foundation summary. CanvasKit WASM is copied locally during install/export; the renderer does not use a CDN.
+Open the URL printed by Expo (normally http://localhost:8081). The home page displays a shuffled 3×4 puzzle. Drag matching neighbors together; empty space pans and +/− zooms. See [gameplay verification](docs/phase-3-gameplay.md). Gallery, photo import and difficulty controls sit above the board. A saved playing game resumes paused; select Resume to continue. CanvasKit WASM is copied locally during install/export; the renderer does not use a CDN.
 
 ```sh
 pnpm check          # strict typecheck + Vitest
@@ -45,7 +45,7 @@ Selected from npm stable metadata and **Expo 58.0.23 `bundledNativeModules.json`
 - Skia 2.14.0 (Expo recommended); peers React >=19, RN >=0.78
 - Reanimated 4.7.1, Worklets 0.13.0, Gesture Handler ~3.3.0 (Expo recommended)
 
-`pnpm-lock.yaml` fixes the actual dependency graph. Use `expo install` when adding native dependencies. Zustand, ImagePicker, ImageManipulator and storage adapters will be added in their implementation phases rather than installing unused modules now.
+`pnpm-lock.yaml` fixes the actual dependency graph. Use `expo install` when adding native dependencies. ImagePicker, ImageManipulator and local storage adapters are included for Phase 4. Zustand remains a later architecture choice.
 
 ## iOS / EAS
 
@@ -64,7 +64,7 @@ pnpm ios
 
 ## Scope and next phase
 
-The Skia preview renders generated puzzle geometry. Phase 2 provides deterministic topology, shared complementary cubic edges and geometry tests in `game-core`; see [geometry API and verification](docs/phase-2-geometry.md). The static preview uses the same cubic contours on Web and iOS. Interactive gameplay remains outside this phase. Gameplay, importing photos, platform persistence, PWA/service-worker offline caching, statistics, production artwork and performance profiling are future phases. The current web shell is **not installable/offline-ready**. No 60 fps claim is made.
+The Skia preview renders generated puzzle geometry. Phase 2 provides deterministic topology, shared complementary cubic edges and geometry tests in `game-core`; see [geometry API and verification](docs/phase-2-geometry.md). The static preview uses the same cubic contours on Web and iOS. Interactive gameplay remains outside this phase. Gameplay, local photo import and single-session persistence are implemented. Full product screens, PWA/service-worker offline caching, production artwork and performance profiling remain pending. The current web shell is **not installable/offline-ready**. No 60 fps claim is made.
 
 Phase 2 core work was explicitly authorized after the DevOps merge. Further roadmap features remain separate Issues and PRs.
 

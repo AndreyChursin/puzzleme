@@ -16,7 +16,7 @@
     "ios": "pnpm --filter @puzzleme/game ios",
     "lint": "eslint . --max-warnings 0",
     "check:dependencies": "pnpm --filter @puzzleme/game exec expo install --check",
-    "test:automation": "node --test .github/scripts/automation-tests.mjs"
+    "test:automation": "node --test .github/scripts/*-tests.mjs"
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",

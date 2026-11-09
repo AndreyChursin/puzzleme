@@ -1,0 +1,35 @@
+name: Feature request
+description: Propose a scoped improvement to PuzzleMe.
+title: '[Feature] '
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and user value
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior and scope
+      description: Include Web/iOS needs, offline behavior, and explicit exclusions.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      placeholder: '- [ ] A user can ...'
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification scenarios
+      description: Steps to demonstrate the proposed behavior and expected results on each affected platform.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives, dependencies, and risks

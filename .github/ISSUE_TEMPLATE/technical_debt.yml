@@ -1,0 +1,36 @@
+name: Technical debt
+description: Propose a maintenance or architecture improvement.
+title: '[Debt] '
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Current problem and evidence
+      description: Identify affected components and reproducible inspection steps, metrics, or failures.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Proposed approach and boundaries
+      description: Describe the change and behavior that must be preserved.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Measurable completion conditions, including preserved behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation and rollback plan
+      description: Commands, manual verification steps, expected results, and how to revert.
+    validations:
+      required: true
+  - type: textarea
+    id: risk
+    attributes:
+      label: Dependencies, risks, and known limitations

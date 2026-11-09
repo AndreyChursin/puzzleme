@@ -67,3 +67,9 @@ pnpm ios
 The Skia scene is a rendering smoke test, not generated puzzle geometry. Phase 2 will add deterministic topology, shared complementary cubic edges and geometry tests. Gameplay, importing photos, platform persistence, PWA/service-worker offline caching, statistics, production artwork and performance profiling are future phases. The current web shell is **not installable/offline-ready**. No 60 fps claim is made.
 
 Do not advance beyond Phase 1 until approved.
+
+## Continuous development
+
+See [continuous development](docs/continuous-development.md) for CI, daily health checks,
+branch protection recommendations, verification instructions, and the disabled future
+Codex automation architecture. PRs require human review and are never auto-merged.

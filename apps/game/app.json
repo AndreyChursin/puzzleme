@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "PuzzleMe",
+    "slug": "puzzleme",
+    "scheme": "puzzleme",
+    "version": "0.1.0",
+    "orientation": "default",
+    "userInterfaceStyle": "automatic",
+    "platforms": [
+      "ios",
+      "web"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.puzzleme.game"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}

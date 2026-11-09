@@ -1,0 +1,23 @@
+{
+  "name": "puzzleme",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @puzzleme/game web",
+    "web": "pnpm dev",
+    "export:web": "pnpm --filter @puzzleme/game export:web",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "pnpm typecheck && pnpm test",
+    "ios": "pnpm --filter @puzzleme/game ios"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "@types/react": "~19.2.0",
+    "vitest": "^4.0.0"
+  }
+}

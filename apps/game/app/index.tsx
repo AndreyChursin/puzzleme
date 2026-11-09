@@ -15,12 +15,12 @@ export default function Home() {
         <Text style={styles.title}>Find your{ '\n' }little escape.</Text>
         <Text style={styles.description}>A quiet moment, a beautiful picture, one piece at a time. Your puzzle space is taking shape.</Text>
         <Pressable accessibilityRole="button" onPress={() => setShowDetails(value => !value)} style={styles.button}><Text style={styles.buttonText}>{showDetails ? 'Hide project details ↑' : 'Explore the foundation →'}</Text></Pressable>
-        <Text style={styles.note}>PHASE 01  /  PROJECT FOUNDATION</Text>
-        {showDetails && <View style={styles.details}><Text style={styles.detailText}>Shared engine · {grid.rows} × {grid.columns} grid · {grid.pieceCount} pieces</Text><Text style={styles.detailText}>Expo Router + React Native + Skia</Text><Text style={styles.detailText}>Gameplay arrives in the next phase.</Text></View>}
+        <Text style={styles.note}>PHASE 02  /  PUZZLE GEOMETRY</Text>
+        {showDetails && <View style={styles.details}><Text style={styles.detailText}>Shared engine · {grid.rows} × {grid.columns} grid · {grid.pieceCount} pieces</Text><Text style={styles.detailText}>Expo Router + React Native + Skia</Text><Text style={styles.detailText}>Deterministic geometry · Seed 42 · Static assembled preview</Text></View>}
       </View>
-      <View style={[styles.card, width < 850 && styles.naturalSize]}><View style={styles.cardTop}><Text style={styles.cardLabel}>THE QUIET OUTDOORS</Text><Text style={styles.cardLabel}>01 / SKIA STUDY</Text></View><View style={styles.scene}><Scene /></View><View style={styles.caption}><View><Text style={styles.cardTitle}>Somewhere peaceful</Text><Text style={styles.small}>Shared rendering test scene</Text></View><Text style={styles.pill}>12 pieces</Text></View></View>
+      <View style={[styles.card, width < 850 && styles.naturalSize]}><View style={styles.cardTop}><Text style={styles.cardLabel}>PIECE BY PIECE</Text><Text style={styles.cardLabel}>02 / GEOMETRY STUDY</Text></View><View style={styles.scene}><Scene /></View><View style={styles.caption}><View><Text style={styles.cardTitle}>A perfect fit</Text><Text style={styles.small}>Shared Web + iOS puzzle geometry</Text></View><Text style={styles.pill}>12 pieces</Text></View></View>
     </View>
-    <View style={styles.footer}><Text style={styles.small}>Made for moments of pause.</Text><Text style={styles.small}>iOS + Web · Foundation preview</Text></View>
+    <View style={styles.footer}><Text style={styles.small}>Made for moments of pause.</Text><Text style={styles.small}>iOS + Web · Geometry preview</Text></View>
   </ScrollView>;
 }
 const styles = StyleSheet.create({

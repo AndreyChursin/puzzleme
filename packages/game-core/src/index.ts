@@ -2,3 +2,7 @@ export { createGrid } from './grid';
 export type { Point, GridDefinition } from './grid';
 export { generatePuzzle, traverseEdge } from './puzzle';
 export type { CubicSegment, PuzzleEdge, PieceEdge, PuzzlePiece, PuzzleDefinition, PuzzleOptions } from './puzzle';
+export { getNeighbors, sampleContour, hasContourIntersection, validatePuzzle } from './validation';
+export type { Side, Neighbors } from './validation';
+export { createAssembledState } from './state';
+export type { PieceState, GameState } from './state';

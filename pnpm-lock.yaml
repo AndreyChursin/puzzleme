@@ -107,6 +107,9 @@ importers:
 
   packages/game-renderer:
     dependencies:
+      '@puzzleme/game-core':
+        specifier: workspace:*
+        version: link:../game-core
       '@shopify/react-native-skia':
         specifier: 2.14.0
         version: 2.14.0(49e76b4680f796a1b176af4dcc1d3e6d)

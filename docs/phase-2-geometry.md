@@ -30,44 +30,70 @@ scale; they are not performance guarantees. All returned objects are frozen.
 Changing the sequence or geometry requires a new algorithm version before saved
 games rely on it. Persistence is not implemented in this phase.
 
+## Neighbors, validation and mutable state
+
+`getNeighbors(puzzle, piece)` returns top/right/bottom/left IDs, with null at the
+exterior. `validatePuzzle(puzzle)` reports count, ID/position, continuity, finite
+coordinates, exterior flatness, complementary neighbor and sampled contour
+intersection errors. This diagnostic is intended for generated definitions and
+tests, not arbitrary untrusted JSON. `sampleContour` defaults to 24 samples per
+cubic; its crossing test detects nonadjacent polyline intersections, including
+touching and collinear segments. This is a numerical regression diagnostic, not
+an exact algebraic cubic-intersection solver. Tests cover 64 seeds plus extreme
+seed and boundary-grid cases and assert clockwise winding and bounded area.
+Validation is intentionally opt-in: all-pairs segment checks are unsuitable for
+per-frame use or automatic validation of a 10,000-piece board.
+
+`createAssembledState(puzzle)` creates independent mutable positions/selection
+records. It never writes into or embeds state in the frozen definition. Positions
+are piece origins in puzzle space. The static preview uses definitions directly;
+no interaction or state persistence is implemented.
+
+## Shared Skia preview
+
+The shared renderer creates 12 closed Skia paths from `traverseEdge` using
+`Skia.PathBuilder`, with a 3×4 grid at seed 42 and size 100. Paths are memoized and
+scaled to available width. Web waits for locally served CanvasKit; native uses
+the same renderer and core geometry. Per-piece colors make the complementary
+contours visible. Both sides stroke their common boundary with identical geometry.
+No image clipping, gestures, panning, snapping or Phase 3 work is included.
+
 ## Verification
 
 Run `pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm test:automation`,
-`pnpm check:dependencies`, and `pnpm export:web`. Unit tests verify repeatability,
-a fixed seed fixture, scaling, closure, shared reversed handles, immutability,
-invalid inputs and single-row/column/single-piece grids.
+`pnpm check:dependencies`, and `pnpm export:web`.
 
-Browser regression: serve `apps/game/dist` with `python -m http.server 8080
---directory apps/game/dist`, open http://localhost:8080 in desktop Chrome and
-mobile Safari, and confirm the mountain Skia scene renders. Toggle the details
-button twice; check the browser console and Network panel for errors and confirm
-local CanvasKit loads. Reload at mobile viewport sizes. Generated pieces are a
-core API only and are not displayed by this smoke scene yet.
+Browser: serve the production build with
+`python -m http.server 8080 --directory apps/game/dist`, then open
+http://localhost:8080 in Chrome. Confirm 12 colored pieces in three rows and four
+columns, a flat rectangular exterior and fitted tab/socket seams with no gaps.
+Toggle the details button twice and confirm the seed-42 description. Resize to a
+phone viewport and reload. Check the console for errors and Network for local
+CanvasKit WASM success. Repeat in Safari; no CDN is required.
 
-Physical iPhone: follow the README EAS development-build setup, install the build,
-run `pnpm ios` on the Mac, connect to Metro, and open the app. Confirm Skia draws
-the mountain scene, details toggle responds to touch, and portrait/landscape
-rotation and background/foreground resume do not crash. Repeat the static Web
-check in Safari. Native builds and physical-device checks require human testing;
-JavaScript unit tests do not establish Hermes or iPhone rendering compatibility.
-
-No piece renderer, dragging, snapping, or persistence is added. Visual tab quality,
-Hermes parity and large-grid performance still require later integration testing.
+Physical iPhone: follow README EAS setup on a Mac, install the development build,
+run `pnpm ios` and connect the app to Metro. Confirm the same 3×4 seed-42 contours
+and colors as Web, with no clipping or seams separating. Toggle details by touch,
+rotate portrait/landscape, and background/resume. Inspect native/Metro logs for
+errors. Also serve the Web export from the Mac's reachable LAN address and
+repeat in iPhone Safari. Device checks verify native Skia/Hermes compatibility;
+Chromium phone viewport checks do not establish it.
 
 ## Executed validation (2026-11-09)
 
 Linux, Node 24.22.1, pnpm 11.25.0: frozen-lockfile installation, typecheck,
-zero-warning lint, all 30 Vitest tests, all 8 automation tests, Expo dependency
-compatibility and production Web export passed. Headless system Chromium passed
-at 1440×1000 and 390×844: canvas attached, details toggled open/closed, zero page
-errors. This confirms the existing shell loads, not visual puzzle rendering.
-No iOS build, physical iPhone, Safari, Hermes or performance test was executed.
+zero-warning lint, all 42 Vitest tests, all 8 automation tests, and production
+Web export passed. Headless system Chromium passed at 1440×1000 and 390×844:
+preview canvas attached, details toggled, local WASM returned 200, and zero
+page/request errors. Desktop screenshot visually inspected for the assembled
+12-piece contours. No iOS build, physical iPhone, Safari or benchmark executed.
 
-This managed workspace requires writable caches: installation used
-`XDG_DATA_HOME=/tmp/puzzleme-data XDG_CACHE_HOME=/tmp/puzzleme-cache` and
-`--store-dir /tmp/puzzleme-store`. Expo commands additionally used
-`npm_config_store_dir=/tmp/puzzleme-store EXPO_NO_TELEMETRY=1`; the dependency
-check used `__UNSAFE_EXPO_HOME_DIRECTORY=/tmp/puzzleme-expo`. Initial default-cache
-attempts failed because `/home/agent` was unwritable; the redirected runs passed.
-The initial fixed-seed test failed due to an incorrectly transcribed expected
-coordinate; correcting the fixture made the complete 30-test suite pass.
+The workspace uses writable cache overrides:
+`XDG_DATA_HOME=/tmp/puzzleme-data XDG_CACHE_HOME=/tmp/puzzleme-cache`, with pnpm
+`--store-dir /tmp/puzzleme-store`; Expo export additionally uses
+`npm_config_store_dir=/tmp/puzzleme-store EXPO_NO_TELEMETRY=1`.
+
+Known limits: contour diagnostics sample curves rather than prove all possible
+cubic intersections. Large-grid performance, native rendering parity, image
+clipping and interaction remain unverified or outside this phase. Algorithm
+versioning must be respected before any saved-state format relies on the seed.

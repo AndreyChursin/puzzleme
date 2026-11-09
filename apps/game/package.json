@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "main": "expo-router/entry",
   "scripts": {
-    "web": "expo start --web --host 0.0.0.0",
+    "web": "expo start --web --host lan",
     "export:web": "node ../../scripts/copy-skia.mjs && expo export --platform web",
     "ios": "expo start --dev-client",
     "postinstall": "node ../../scripts/copy-skia.mjs"

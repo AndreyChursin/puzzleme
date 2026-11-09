@@ -1,6 +1,6 @@
 # PuzzleMe
 
-Cross-platform offline jigsaw project. **Phase 1 only:** pnpm monorepo, strict TypeScript, Expo Router, shared Skia smoke scene, and a small tested game-core foundation. No gameplay or persistence is implemented yet.
+Cross-platform offline jigsaw project. **Phase 2 core geometry:** pnpm monorepo, strict TypeScript, Expo Router, shared Skia smoke scene, and deterministic, immutable jigsaw topology with complementary Bézier boundaries. No gameplay or persistence is implemented yet.
 
 ## Run
 
@@ -64,9 +64,9 @@ pnpm ios
 
 ## Scope and next phase
 
-The Skia scene is a rendering smoke test, not generated puzzle geometry. Phase 2 will add deterministic topology, shared complementary cubic edges and geometry tests. Gameplay, importing photos, platform persistence, PWA/service-worker offline caching, statistics, production artwork and performance profiling are future phases. The current web shell is **not installable/offline-ready**. No 60 fps claim is made.
+The Skia scene is a rendering smoke test, not generated puzzle geometry. Phase 2 now provides deterministic topology, shared complementary cubic edges and geometry tests in `game-core`; see [geometry API and verification](docs/phase-2-geometry.md). Puzzle rendering is the next unfinished roadmap feature. Gameplay, importing photos, platform persistence, PWA/service-worker offline caching, statistics, production artwork and performance profiling are future phases. The current web shell is **not installable/offline-ready**. No 60 fps claim is made.
 
-Do not advance beyond Phase 1 until approved.
+Phase 2 core work was explicitly authorized after the DevOps merge. Further roadmap features remain separate Issues and PRs.
 
 ## Continuous development
 
